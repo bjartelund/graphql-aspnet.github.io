@@ -38,7 +38,7 @@ query {
 
 Knowing what we know, you may think we need to create classes for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. in order to create properties and methods for all those fields. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids. Some other GraphQL libraries take this approach and it provides an extreme amount of customization at the cost of being rather verbose.
 
-GraphQL ASP.NET takes a different appraoch and uses a templating pattern similar to what we do with REST controllers we can create rich graphs with very little boiler plate. Adding a new branch to your graph is as simple as defining a path to it in a controller. 
+GraphQL ASP.NET takes a different approach and uses a templating pattern similar to what we do with REST controllers we can create rich graphs with very little boiler plate. Adding a new branch to your graph is as simple as defining a path to it in a controller. 
 
 ```csharp title="Sample Controller"
 // highlight-next-line

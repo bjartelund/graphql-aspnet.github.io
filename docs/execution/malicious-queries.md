@@ -101,7 +101,7 @@ A complexity score is derived from these attributes:
 | Type Expression   | Does the field produce 1 single item or a collection of items?                                                   |
 | Complexity Factor | A user controlled value to influence the calculation for queries or mutations that are particularly long running |
 
-The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Engine/DefaultOperationComplexityCalculator%7BTSchema%7D.cs)
+The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Engine/DefaultQueryOperationComplexityCalculator%7BTSchema%7D.cs)
 
 ### Setting a Complexity Weight
 

@@ -299,12 +299,16 @@ GraphQL ASP.NET is smart enough to figure out your intent with object use (i.e. 
 
 Graphql will not attempt to "auto include" the interfaces implemented by your objects in your schema. This is both a security measure to prevent information from leaking as well as a decluttering technique. Its unlikely that your schema cares about the myriad of interfaces you may declare on your business objects. 
 
-However, when an interface is included in schema, graphql will sense the inclusion and automatically wire up the necessary information on your objects that implement.
+However, when an interface is included in schema, graphql will sense the inclusion and automatically wire up the necessary information on your objects that implement it.
 
 ```csharp title="Including a Pastry"
 public class PastryController: GraphController
 {
+  // this method returns an interface
+  // and declares that Donut is a graph type that might be returned 
+  // as the interface
   [QueryRoot("retrievePastry", typeof(Donut))]
+  // highlight-next-line
   public IPastry RetrievePastry(string id){/* ... */}
 }
 ```

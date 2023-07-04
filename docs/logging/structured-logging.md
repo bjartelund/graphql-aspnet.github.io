@@ -5,7 +5,7 @@ sidebar_label: Structured Logging
 sidebar_position: 0
 ---
 
-GraphQL ASP.NET utilizes structured logging for reporting runtime events. The log messages generated aren't just strings but actual objects. All internal log events are raised as objects that inherit from `IGraphLogEntry`.
+GraphQL ASP.NET utilizes structured logging for reporting runtime events. The log messages generated aren't just strings but actual objects. All internal log events are raised as objects that implement from `IGraphLogEntry`.
 
 ## IServiceCollection.AddLogging()
 

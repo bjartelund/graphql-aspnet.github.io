@@ -50,7 +50,6 @@ public class BakeryController : GraphController
 {
     // The user would have to pass the CurrentCustomer policy
     // and the LoyaltyProgram policy to access the `orderDonuts` field
-
     // highlight-next-line
     [Authorize(Policy = "LoyaltyProgram")]
     [MutationRoot("orderDonuts", typeof(CompletedDonutOrder))]
@@ -86,12 +85,14 @@ Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference 
 
 GraphQL ASP.NET makes use of the result from [ASP.NET's security pipeline](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction). Whether you use Kerberos tokens, oauth2, username/password, API tokens or if you support 2-factor authentication or one-time-use passwords, GraphQL doesn't care. The entirety of your authentication and authorization scheme is executed by GraphQL, no special arrangements or configuration is needed.
 
-> GraphQL ASP.NET draws from your configured authentication/authorization solution.
+:::info
+GraphQL ASP.NET draws from your configured authentication/authorization solution.
+:::
 
-Execution directives and field resolutions are passed through the libraries internal [pipeline](../reference/how-it-works#middleware-pipelines) where securty is enforced as a series of middleware components before the respective resolvers are invoked. Should a requestor not be authorized for a given schema item they are informed via an error message and denied access to the item.
+Execution directives and field resolutions are passed through the library's internal [pipeline](../reference/how-it-works#middleware-pipelines) where securty is enforced as a series of middleware components before the respective resolvers are invoked. Should a requestor not be authorized for a given schema item they are informed via an error message and denied access to the item.
 
 
-## Field Authorizations
+## Field Authorization Failures
 
 If a requestor is not authorized to a requested field a value of `null` is used as the resolved value and an error message is recorded to the query results. 
 
@@ -99,11 +100,9 @@ Null propagation rules still apply to unauthorized fields meaning if the field c
 
 By default, a single unauthorized field result does not necessarily kill an entire query, it depends on the structure of your object graph and the query being executed. When a field request is terminated any down-stream child fields are discarded immediately but sibling fields or unrelated ancestors continue to execute as normal.
 
-Since this authorization occurs "per field" and not "per controller action" its possible to define the same security chain for POCO properties. This allows you to effectively deny access, by policy, to a single property of an instantiated object. Performing security checks for every field of data (especially in parent/child scenarios) has a performance cost though, especially for larger data sets. For most scenarios enforcing security at the controller level is sufficient.
+### Failures are Obfuscated
 
-### Field Authorization Failures are Obfuscated
-
-When GraphQL denies a requestor access to a field a message naming the field path is added to the response. This message is generic on purpose. Suppose there was a query where the user requests the `allDonuts` field but is denied access:
+When GraphQL denies a requestor access to a field, a message naming the field path is added to the response. This message is generic on purpose. Suppose there was a query where the user requests the `allDonuts` field but is denied access:
 
 ```graphql
     {
@@ -113,14 +112,12 @@ When GraphQL denies a requestor access to a field a message naming the field pat
         allDonuts {
             name
         }
-
     }
-
 ```
 
 The result might look like this:
 
-```json title="Denied Field Access"
+```json title="Denied Field Access Result"
 {
   "errors": [
     // highlight-start
@@ -153,17 +150,51 @@ The result might look like this:
 }
 ```
 
-:::tip
+:::info Auth failures are logged by default
  To view more details authorization failure reasons, such as specific policy failures, you'll need to expose exceptions on the request or turn on [logging](../logging/structured-logging). 
  
  GraphQL automatically raises the `SchemaItemAuthorizationCompleted` log event at a `Warning` level when a security check fails.
 :::
 
+## Authorization on POCO Objects
+
+You can define security requirements for POCO properties. This allows you to effectively deny access, by policy, to a single property or method of an instantiated object. Performing security checks for every field of data (especially in parent/child scenarios) has a performance cost though, especially for larger data sets. For most scenarios enforcing security at the controller level is sufficient.
+
+```csharp title="Use [Authorize] on a normal property"
+public class Celebrity
+{
+  public string Name{ get; set; }
+
+  // highlight-next-line
+  [Authorize(Policy = "Admin")]
+  public string CellPhoneNumber {get; set; }
+}
+```
+
 ## Authorization on Execution Directives
+
+Authorization can be applied to directives as well.
+
+```csharp Title="Authorization on a Directive"
+
+public class MyCustomDirective : GraphDirective
+{
+    // highlight-next-line
+    [Authorize]
+    [DirectiveLocations(DirectiveLocation.FIELD)]
+    public IGraphActionResult Execute()
+    {
+        // contents not shown
+        return this.Ok();
+    }
+}
+```
 
 Execution directives are applied to the _query document_, before a query plan is created to fulfill the request. However, it is the query plan that determines which field resolvers should be called. As a result, execution directives have the potential to alter the document structure and change how a query plan might be structured. Because of this, not executing a query directive has the potential to cause a the expected query to be different than what the requestor intended. 
 
 Therefore, if an execution directive fails authorization the query is rejected and not executed.  The caller will receive an error message as part of the response indicating the unauthorized directive. Like field authorization failures, the message is obfuscated and contains only a generic message. You'll need to expose exception on the request or turn on logging to see additional details.
+
+
 
 ## Authorization Methods
 
@@ -175,7 +206,7 @@ GraphQL ASP.NET supports two methods of applying the authorization rules out of 
 
 Configure the authorization method at startup:
 
-```csharp title="Startup"
+```csharp title="Startup Code"
 services.AddGraphQL(schemaOptions =>
 {
     schemaOptions.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;

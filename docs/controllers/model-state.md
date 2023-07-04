@@ -21,7 +21,7 @@ But it fails to enforce the individual business level requirements:
 🧨   A customer's phone number should be 7 or 10 digits.<br/>
 🧨   A customer must order at least 1 donut.
 
-This is where model state can come in handy. Its completely optional, but if you choose to make use of it, it provides a handy way to inforce business level requirements in your action methods.
+This is where model state can come in handy. Its completely optional, but if you choose to make use of it, it provides a handy way to enforce business level requirements in your action methods.
 
 ## Using Model Validation
 
