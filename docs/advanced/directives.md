@@ -371,8 +371,8 @@ services.AddGraphQL(options =>
     options.AddGraphType<Person>();
 
     // mark Person.Name as deprecated
-    options.ApplyDirective("monitor")
-        .ToItems(schemaItem => schemaItem.IsObjectGraphType<Person>());
+    options.ApplyDirective("deprecated")
+        .ToItems(schemaItem => schemaItem.IsField<Person>("name"));
 }
 ```
 

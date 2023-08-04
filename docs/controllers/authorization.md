@@ -218,5 +218,5 @@ services.AddGraphQL(schemaOptions =>
 Authorization is not free. There is a minor, but real, performance cost to inspecting and evaluating policies on each field. This true regardless of yor choice of `PerField` or `PerRequest` authorization. Every secured field still needs to be evaluated, whether it is done up front or as the query progresses.  In a REST query, you generally only secure your top-level controller methods, consider doing the same with your GraphQL queries.
 
 :::tip
-Centralize your authorization checks to your controller methods. There is usually no need to apply `[Authorize]`  attributes to each and every method and property across your entire schema.
+Centralize your authorization checks to your controller methods. There is usually no need to apply `[Authorize]` attributes to each and every method and property across your entire schema.
 :::
